@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -424,16 +425,16 @@ async function runScan(){
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
-        model:'claude-opus-4-5',
-        max_tokens:4000,
-        messages:[{role:'user',content:`You are a product trend analyst for a dropshipping business in ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}. Return ONLY a valid JSON object with no explanation or markdown.
+        model:'claude-haiku-4-5',
+        max_tokens:6000,
+        messages:[{role:'user',content:`You are a product trend analyst for a dropshipping business in ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}. Return ONLY a valid JSON object with no explanation, no markdown, no code fences.
 
-Generate exactly 30 trending products across: Pet Supplies, Beauty & Personal Care, Home & Kitchen, Health & Wellness, Consumer Electronics, Fashion & Accessories. Focus on products with 40%+ profit margins, strong social media traction, and dropshipping viability.
+Generate exactly 20 trending products across: Pet Supplies, Beauty & Personal Care, Home & Kitchen, Health & Wellness, Consumer Electronics, Fashion & Accessories. Focus on products with 40%+ profit margins and dropshipping viability. Keep all string values SHORT (under 15 words each).
 
-Also generate exactly 9 Etsy digital printable ideas directly connected to the trending product categories.
+Also generate exactly 6 Etsy digital printable ideas. Keep all string values SHORT (under 12 words each).
 
-Return this exact JSON structure:
-{"products":[{"id":"p1","name":"string","category":"string","source":"Amazon|TikTok|Google Trends","trendScore":98,"viralLevel":"viral|high|medium","rank":1,"description":"string","whyTrending":"string","salesVelocity":"string","retailPrice":49.99,"estimatedCost":12.50,"estimatedProfit":37.49,"profitMargin":75}],"etsyPrintables":[{"id":"e1","name":"string","category":"string","linkedTrend":"string","description":"string","competition":"low|medium|high","priceLow":3.99,"priceHigh":9.99,"margin":85,"trendScore":88,"trendReason":"string"}]}`}]
+Return ONLY this JSON (no other text):
+{"products":[{"id":"p1","name":"","category":"","source":"Amazon|TikTok|Google Trends","trendScore":98,"viralLevel":"viral|high|medium","rank":1,"description":"","whyTrending":"","salesVelocity":"","retailPrice":49.99,"estimatedCost":12.50,"estimatedProfit":37.49,"profitMargin":75}],"etsyPrintables":[{"id":"e1","name":"","category":"","linkedTrend":"","description":"","competition":"low|medium|high","priceLow":3.99,"priceHigh":9.99,"margin":85,"trendScore":88,"trendReason":""}]}`}]
       })
     });
     const data=await res.json();
@@ -558,3 +559,4 @@ updateStatusBar();
 render();
 </script>
 </body>
+</html>
