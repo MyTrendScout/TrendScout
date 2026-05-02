@@ -437,22 +437,25 @@ async function runScan(){
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
-        model:'claude-haiku-4-5',
-        max_tokens:6000,
-        messages:[{role:'user',content:`You are a product trend analyst for a dropshipping business in ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}. Return ONLY a valid JSON object with no explanation, no markdown, no code fences.
+        model:'claude-3-5-haiku-20241022',
+        max_tokens:4000,
+        messages:[{role:'user',content:`You are a dropshipping product analyst. Return ONLY raw JSON, no markdown, no code fences, no explanation.
 
-Generate exactly 20 trending products across: Pet Supplies, Beauty & Personal Care, Home & Kitchen, Health & Wellness, Consumer Electronics, Fashion & Accessories. Focus on products with 40%+ profit margins and dropshipping viability. Keep all string values SHORT (under 15 words each).
+Generate 15 trending dropshipping products for ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}. Mix these categories: Pet Supplies, Beauty, Home & Kitchen, Health & Wellness, Electronics, Fashion. Use SHORT strings max 8 words each.
 
-Also generate exactly 6 Etsy digital printable ideas. Keep all string values SHORT (under 12 words each).
-
-Return ONLY this JSON (no other text):
-{"products":[{"id":"p1","name":"","category":"","source":"Amazon|TikTok|Google Trends","trendScore":98,"viralLevel":"viral|high|medium","rank":1,"description":"","whyTrending":"","salesVelocity":"","retailPrice":49.99,"estimatedCost":12.50,"estimatedProfit":37.49,"profitMargin":75}],"etsyPrintables":[{"id":"e1","name":"","category":"","linkedTrend":"","description":"","competition":"low|medium|high","priceLow":3.99,"priceHigh":9.99,"margin":85,"trendScore":88,"trendReason":""}]}`}]
+Return ONLY this JSON:
+{"products":[{"id":"p1","name":"","category":"","source":"","trendScore":0,"viralLevel":"","rank":0,"description":"","whyTrending":"","retailPrice":0,"estimatedCost":0,"estimatedProfit":0,"profitMargin":0}],"etsyPrintables":[{"id":"e1","name":"","category":"","linkedTrend":"","competition":"","priceLow":0,"priceHigh":0,"margin":0,"trendScore":0}]}`}]
       })
     });
     const data=await res.json();
     if(data.error){throw new Error(data.error.message);}
     const txt=data.content.map(c=>c.text||'').join('');
-    const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    const clean=txt.replace(/```json|```/g,'').trim();
+    let parsed;
+    try{parsed=JSON.parse(clean);}catch(je){
+      console.error('Raw response:',clean);
+      throw new Error('JSON parse failed — response was cut off. Raw: '+clean.slice(0,200));
+    }
     S.products=parsed.products||[];
     S.etsy=parsed.etsyPrintables||[];
     S.catFilter='All';
